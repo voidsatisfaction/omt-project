@@ -1,0 +1,15 @@
+# OMT(Oh My Teacher) project
+
+This is line bot named "Hiyoko teacher" who is specialist of word exams
+
+## Motivation
+
+I am currently actively participating a internet english speaking class. Every day, my teacher types me a lot of words or sentences used in class.
+
+As I am lazy man, I usually study words only once after finishing class therefore I could not absorb these words and sentences efficiently.
+
+So I made this app to solve word memorizing problem.
+
+It is funny to make and even solve my problem. Wow.
+
+## Technology Stack
