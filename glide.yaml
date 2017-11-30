@@ -1,0 +1,5 @@
+package: github.com/voidsatisfaction/omt-project
+import:
+- package: github.com/labstack/echo
+  subpackages:
+  - '...'
