@@ -1,15 +1,24 @@
-hash: f0136f055e45cb94d740cc0ce4c6872d996ac77c874232e5077bde9bb8b10fd5
-updated: 2017-11-30T13:24:53.944828379+09:00
+hash: cc6713e5855cd16bd8315e0b1daa2695ccfd0a4f4ffec6abce6d8330b9ae6acd
+updated: 2017-11-30T17:20:42.569537223+09:00
 imports:
+- name: github.com/dgrijalva/jwt-go
+  version: dbeaa9332f19a944acb5736b4456cfcc02140e29
 - name: github.com/labstack/echo
   version: 0473c51f1dbd83487effce00702571d19033a6e5
   subpackages:
   - '...'
+  - middleware
 - name: github.com/labstack/gommon
   version: 57409ada9da0f2afad6664c49502f8c50fbd8476
   subpackages:
+  - bytes
   - color
   - log
+  - random
+- name: github.com/line/line-bot-sdk-go
+  version: 3a7d66f5efce6ac202f650134609f9d6d163a640
+  subpackages:
+  - linebot
 - name: github.com/mattn/go-colorable
   version: 6fcc0c1fd9b620311d821b106a400b35dc95c497
 - name: github.com/mattn/go-isatty
@@ -23,6 +32,11 @@ imports:
   subpackages:
   - acme
   - acme/autocert
+- name: golang.org/x/net
+  version: a8b9294777976932365dabb6640cf1468d95c70f
+  subpackages:
+  - context
+  - context/ctxhttp
 - name: golang.org/x/sys
   version: 13fcbd661c8ececa8807a29b48407d674b1d8ed8
   subpackages:

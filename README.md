@@ -13,3 +13,8 @@ So I made this app to solve word memorizing problem.
 It is funny to make and even solve my problem. Wow.
 
 ## Technology Stack
+
+1. echo(golang)
+2. Line Messaging API
+
+## Developement

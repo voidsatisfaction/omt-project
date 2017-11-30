@@ -3,3 +3,7 @@ import:
 - package: github.com/labstack/echo
   subpackages:
   - '...'
+- package: github.com/dgrijalva/jwt-go
+- package: github.com/line/line-bot-sdk-go
+  subpackages:
+  - linebot
