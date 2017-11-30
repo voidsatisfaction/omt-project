@@ -1,1 +1,5 @@
 vendor/
+
+gin-bin
+
+.env_dev

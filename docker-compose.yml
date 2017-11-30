@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    build: .
+    container_name: "omt-project"
+    ports:
+      - "19000:9000"
+    volumes:
+      - "$PWD:/go/src/omt-project"
+    env_file:
+      - .env_dev
