@@ -8,9 +8,11 @@ import (
 
 type Action struct {
 	replyToken string
-	actionType string
+	actionType ActionType
 	payloads   []string
 }
+
+type ActionType string
 
 type CommandTypeMap map[string]bool
 
@@ -47,6 +49,9 @@ func CreateAction(msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSo
 		return a
 	}
 
-	a.actionType = command
+	a.actionType = ActionType(command)
+
+	// TODO: Change it to good one
+	a.payloads = msgSlice[1:]
 	return a
 }
