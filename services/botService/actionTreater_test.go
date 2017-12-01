@@ -5,7 +5,7 @@ import (
 )
 
 func TestTreatAction(t *testing.T) {
-	expect := "search"
+	expect := "용"
 	dummyAction := &Action{
 		replyToken: "123",
 		actionType: Search,
