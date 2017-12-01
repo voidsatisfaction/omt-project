@@ -1,6 +1,6 @@
 # OMT(Oh My Teacher) project
 
-![qr code](https://qr-official.line.me/M/N9SqM2O1EO.png)
+![qr code](./qr.png)
 
 This is line bot named "Hiyoko teacher" who is specialist of word exams
 
