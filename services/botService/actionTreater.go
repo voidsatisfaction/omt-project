@@ -60,6 +60,12 @@ func TreatSearchAction(a *Action) *ActionResult {
 	gRes := &glosbe.GlosbeResponse{}
 	json.Unmarshal(body, gRes)
 
+	// When phrase is not found on the glosbe site
+	if len(gRes.Tucs) == 0 {
+		ar.PhraseNotFound()
+		return ar
+	}
+
 	mulSlice := glosbe.ExtractTenMeaning(gRes)
 	ar.Text = strings.Join(mulSlice, ", ")
 	return ar
@@ -75,5 +81,12 @@ func TreatPredefinedAction(a *Action) *ActionResult {
 
 func (ar *ActionResult) ServerError() *ActionResult {
 	ar.Text = "先生、今、体の調子が悪いの"
+	return ar
+}
+
+func (ar *ActionResult) PhraseNotFound() *ActionResult {
+	bp := BotPhrase{}
+	bp.Setting()
+	ar.Text = bp[PhraseNotFound]
 	return ar
 }

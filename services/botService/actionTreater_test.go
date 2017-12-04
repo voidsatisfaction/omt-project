@@ -74,3 +74,34 @@ func TestTreatPredefinedAction(t *testing.T) {
 		}
 	}
 }
+
+func TestPhraseNotFound(t *testing.T) {
+	bp := BotPhrase{}
+	bp.Setting()
+	var tests = []struct {
+		expect string
+		action *Action
+	}{
+		{
+			bp[PhraseNotFound],
+			createDummyAction(Search, []string{"alksfmlwkemflekmlwfkwefw"}),
+		},
+		{
+			bp[PhraseNotFound],
+			createDummyAction(Search, []string{"asdfasda", "off", "wkejnfkwqe"}),
+		},
+	}
+
+	for _, test := range tests {
+		expect := test.expect
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Text
+		if expect != actual {
+			t.Errorf(
+				"Expect %s, got %s on Parameter: %+v",
+				expect, actual, dummyAction.payloads,
+			)
+		}
+	}
+}
