@@ -4,10 +4,16 @@ import "os"
 
 // Config is configuration of app
 type Config struct {
-	AppEnv        string
-	Port          string
-	ChannelSecret string
-	ChannelToken  string
+	AppEnv              string
+	Port                string
+	ChannelSecret       string
+	ChannelToken        string
+	AwsRegion           string
+	AwsAccessKeyID      string
+	AwsSecretAccessKey  string
+	AwsS3Bucket         string
+	AwsS3BucketUsersKey string
+	AwsS3BucketWordsKey string
 }
 
 // Setting function returns configuration
@@ -25,5 +31,11 @@ func Setting() *Config {
 		c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
 		c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
 	}
+	c.AwsRegion = os.Getenv("AWS_REGION")
+	c.AwsAccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
+	c.AwsSecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	c.AwsS3Bucket = "omt-project"
+	c.AwsS3BucketUsersKey = "users/"
+	c.AwsS3BucketWordsKey = "words/"
 	return c
 }
