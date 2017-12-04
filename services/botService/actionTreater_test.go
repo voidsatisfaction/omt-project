@@ -4,6 +4,14 @@ import (
 	"testing"
 )
 
+func createDummyAction(at ActionType, pl []string) *Action {
+	return &Action{
+		replyToken: "123",
+		actionType: at,
+		payloads:   pl,
+	}
+}
+
 func createInvalidDummyAction() *Action {
 	return &Action{
 		replyToken: "123",
@@ -21,16 +29,21 @@ func createInvalidCommandDummyAction() *Action {
 }
 
 func TestTreatSearchActionSuccess(t *testing.T) {
-	dummyAction := &Action{
-		replyToken: "123",
-		actionType: Search,
-		payloads:   []string{"water"},
+	var tests = []struct {
+		action *Action
+	}{
+		{createDummyAction(Search, []string{"water"})},
+		{createDummyAction(Search, []string{"take", "off"})},
+		{createDummyAction(Search, []string{"in", "front", "of"})},
 	}
 
-	actionResult := TreatAction(dummyAction)
-	actual := actionResult.Text
-	if len(actual) <= 0 {
-		t.Error("Expect string size > 0, got ", len(actual))
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Text
+		if len(actual) <= 0 {
+			t.Errorf("Expect string size > 0, got %d on Parameter: %+v", len(actual), dummyAction.payloads)
+		}
 	}
 }
 

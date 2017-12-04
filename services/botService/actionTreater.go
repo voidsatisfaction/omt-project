@@ -30,7 +30,7 @@ func TreatSearchAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
 	// TODO: for korean user, use korean
-	phrase := strings.Join(a.payloads, " ")
+	phrase := strings.Join(a.payloads, "%20")
 	glosbeParameter := &glosbe.GlosbeParameter{
 		LanguageFrom: "eng",
 		LanguageTo:   "jpn",
@@ -60,8 +60,8 @@ func TreatSearchAction(a *Action) *ActionResult {
 	gRes := &glosbe.GlosbeResponse{}
 	json.Unmarshal(body, gRes)
 
-	// TODO: more elegant way
-	ar.Text = strings.Join(glosbe.ExtractMultipleMeaning(gRes), ", ")
+	mulSlice := glosbe.ExtractTenMeaning(gRes)
+	ar.Text = strings.Join(mulSlice, ", ")
 	return ar
 }
 
