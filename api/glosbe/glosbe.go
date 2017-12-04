@@ -42,6 +42,8 @@ func CreateGlosbeTranslateRequest(gp *GlosbeParameter) (*http.Request, error) {
 		phrase,
 	)
 	req, err := http.NewRequest("GET", reqURL, nil)
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36")
+	req.Header.Add("Accept", "*/*")
 	if err != nil {
 		return nil, err
 	}
@@ -62,15 +64,19 @@ type Phrase struct {
 	Language string `json:"language"`
 }
 
-func ExtractMultipleMeaning(gRes *GlosbeResponse) []string {
+func ExtractTenMeaning(gRes *GlosbeResponse) []string {
 	var s []string
 	check := make(map[string]bool)
-	for _, tuc := range gRes.Tucs {
+	for i, tuc := range gRes.Tucs {
+		if i > 9 {
+			break
+		}
 		text := tuc.Phrase.Text
 		if _, exist := check[text]; !exist {
 			check[text] = true
 			s = append(s, text)
 		}
 	}
+
 	return s
 }
