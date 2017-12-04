@@ -16,14 +16,6 @@ type ActionType string
 
 type CommandTypeMap map[string]bool
 
-const (
-	Invalid = "INVALID"
-
-	InvalidCommand = "INVALID_COMMAND"
-	Add            = "add"
-	Search         = "search"
-)
-
 func CreateAction(msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSource) *Action {
 	a := &Action{}
 	a.replyToken = rToken
@@ -51,7 +43,6 @@ func CreateAction(msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSo
 
 	a.actionType = ActionType(command)
 
-	// TODO: Change it to good one
 	a.payloads = msgSlice[1:]
 	return a
 }
