@@ -3,7 +3,8 @@ package botService
 import (
 	"encoding/json"
 	"io/ioutil"
-	"omt-project/api"
+	"omt-project/api/glosbe"
+	"strings"
 )
 
 type ActionResult struct {
@@ -15,9 +16,9 @@ func TreatAction(a *Action) *ActionResult {
 	actionResult := &ActionResult{}
 	switch a.actionType {
 	case Invalid:
-		actionResult = TreatInvalidAction(a)
+		actionResult = TreatPredefinedAction(a)
 	case InvalidCommand:
-		actionResult = TreatInvalidAction(a)
+		actionResult = TreatPredefinedAction(a)
 	case Search:
 		// Call word search api
 		actionResult = TreatSearchAction(a)
@@ -29,14 +30,15 @@ func TreatSearchAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
 	// TODO: for korean user, use korean
-	glosbeParameter := &api.GlosbeParameter{
+	phrase := strings.Join(a.payloads, " ")
+	glosbeParameter := &glosbe.GlosbeParameter{
 		LanguageFrom: "eng",
-		LanguageTo:   "kor",
-		Phrase:       a.payloads[0],
+		LanguageTo:   "jpn",
+		Phrase:       phrase, // TODO: change it to searchable phrase
 	}
 
-	glosbeClient := api.CreateGlosbeClient()
-	glosbeRequest, err := api.CreateGlosbeTranslateRequest(glosbeParameter)
+	glosbeClient := glosbe.CreateGlosbeClient()
+	glosbeRequest, err := glosbe.CreateGlosbeTranslateRequest(glosbeParameter)
 	if err != nil {
 		ar.ServerError()
 		return ar
@@ -50,24 +52,20 @@ func TreatSearchAction(a *Action) *ActionResult {
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		ar.ServerError()
+		return ar
+	}
 
-	gRes := api.GlosbeResponse{}
-	json.Unmarshal(body, &gRes)
+	gRes := &glosbe.GlosbeResponse{}
+	json.Unmarshal(body, gRes)
 
 	// TODO: more elegant way
-	ar.Text = gRes.Tucs[0].Phrase.Text
+	ar.Text = strings.Join(glosbe.ExtractMultipleMeaning(gRes), ", ")
 	return ar
 }
 
-func TreatInvalidAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
-	bp := BotPhrase{}
-	bp.Setting()
-	ar.Text = bp[a.actionType]
-	return ar
-}
-
-func TreatInvalidCommandAction(a *Action) *ActionResult {
+func TreatPredefinedAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 	bp := BotPhrase{}
 	bp.Setting()
