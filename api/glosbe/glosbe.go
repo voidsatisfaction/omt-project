@@ -1,4 +1,4 @@
-package api
+package glosbe
 
 import (
 	"fmt"
@@ -54,8 +54,23 @@ type GlosbeResponse struct {
 }
 
 type Tuc struct {
-	Phrase struct {
-		Text     string `json:"text"`
-		Language string `json:"language"`
+	Phrase Phrase
+}
+
+type Phrase struct {
+	Text     string `json:"text"`
+	Language string `json:"language"`
+}
+
+func ExtractMultipleMeaning(gRes *GlosbeResponse) []string {
+	var s []string
+	check := make(map[string]bool)
+	for _, tuc := range gRes.Tucs {
+		text := tuc.Phrase.Text
+		if _, exist := check[text]; !exist {
+			check[text] = true
+			s = append(s, text)
+		}
 	}
+	return s
 }
