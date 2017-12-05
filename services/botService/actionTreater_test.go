@@ -47,6 +47,31 @@ func TestTreatSearchActionSuccess(t *testing.T) {
 	}
 }
 
+func TestTreatAddAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{
+			SuccessCode,
+			createDummyAction(Add, []string{"water", "水"}),
+		},
+		{
+			SuccessCode,
+			createDummyAction(Add, []string{"wind", "風"}),
+		},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Status
+		if actual != SuccessCode {
+			t.Errorf("Expect Status SUCCEESS, got %s", actual)
+		}
+	}
+}
+
 func TestTreatPredefinedAction(t *testing.T) {
 	bp := BotPhrase{}
 	bp.Setting()

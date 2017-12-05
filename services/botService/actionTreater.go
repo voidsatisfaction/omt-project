@@ -7,8 +7,16 @@ import (
 	"strings"
 )
 
+const (
+	SuccessCode ActionStatusCode = "SUCCESS"
+	FailCode    ActionStatusCode = "FAIL"
+)
+
+type ActionStatusCode string
+
 type ActionResult struct {
-	Text string
+	Status ActionStatusCode
+	Text   string
 }
 
 // TreatAction is manager of actions
@@ -22,6 +30,9 @@ func TreatAction(a *Action) *ActionResult {
 	case Search:
 		// Call word search api
 		actionResult = TreatSearchAction(a)
+	case Add:
+		actionResult = TreatAddAction(a)
+		// User add own phrase
 	}
 	return actionResult
 }
@@ -34,7 +45,7 @@ func TreatSearchAction(a *Action) *ActionResult {
 	glosbeParameter := &glosbe.GlosbeParameter{
 		LanguageFrom: "eng",
 		LanguageTo:   "jpn",
-		Phrase:       phrase, // TODO: change it to searchable phrase
+		Phrase:       phrase,
 	}
 
 	glosbeClient := glosbe.CreateGlosbeClient()
@@ -68,6 +79,14 @@ func TreatSearchAction(a *Action) *ActionResult {
 
 	mulSlice := glosbe.ExtractTenMeaning(gRes)
 	ar.Text = strings.Join(mulSlice, ", ")
+	ar.Status = SuccessCode
+	return ar
+}
+
+func TreatAddAction(a *Action) *ActionResult {
+	ar := &ActionResult{}
+
+	ar.Status = SuccessCode
 	return ar
 }
 
@@ -81,6 +100,7 @@ func TreatPredefinedAction(a *Action) *ActionResult {
 
 func (ar *ActionResult) ServerError() *ActionResult {
 	ar.Text = "先生、今、体の調子が悪いの"
+	ar.Status = FailCode
 	return ar
 }
 
@@ -88,5 +108,6 @@ func (ar *ActionResult) PhraseNotFound() *ActionResult {
 	bp := BotPhrase{}
 	bp.Setting()
 	ar.Text = bp[PhraseNotFound]
+	ar.Status = FailCode
 	return ar
 }
