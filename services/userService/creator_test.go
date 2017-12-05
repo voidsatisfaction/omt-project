@@ -1,4 +1,4 @@
-package botFollow
+package userService
 
 import "testing"
 
