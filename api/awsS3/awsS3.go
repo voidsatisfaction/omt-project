@@ -30,3 +30,13 @@ func CreateS3Client() (*s3.S3, error) {
 	}
 	return s3.New(sess), nil
 }
+
+func GetWordKey(userId string) string {
+	c := config.Setting()
+	return fmt.Sprintf("%s%s", c.AwsS3BucketWordsKey, userId)
+}
+
+func GetUserKey(userId string) string {
+	c := config.Setting()
+	return fmt.Sprintf("%s%s", c.AwsS3BucketUsersKey, userId)
+}
