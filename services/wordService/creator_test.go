@@ -7,11 +7,6 @@ func TestCreateNewWord(t *testing.T) {
 	CreateNewWord(userId)
 }
 
-func TestReadWord(t *testing.T) {
-	userId := "abc"
-	ReadWord(userId)
-}
-
 func TestAddWord(t *testing.T) {
 	userId := "abc"
 	wordName := "water"
@@ -20,4 +15,9 @@ func TestAddWord(t *testing.T) {
 	if err != nil {
 		t.Errorf("There was error: %+v", err)
 	}
+}
+
+func TestReadWords(t *testing.T) {
+	userId := "abc"
+	ReadWords(userId)
 }

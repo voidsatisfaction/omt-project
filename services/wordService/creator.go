@@ -15,6 +15,28 @@ type WordsInfo struct {
 	Words Words `json:"words"`
 }
 
+func (wi *WordsInfo) addWord(w Word) {
+	wi.Words = append(wi.Words, w)
+}
+
+func (wi *WordsInfo) findWordIndex(wn string) int {
+	for i, w := range wi.Words {
+		if wn == w.Name {
+			return i
+		}
+	}
+	return -1
+}
+
+func (wi *WordsInfo) existWord(wn string) bool {
+	for _, w := range wi.Words {
+		if wn == w.Name {
+			return true
+		}
+	}
+	return false
+}
+
 type Words []Word
 
 type Word struct {
@@ -39,6 +61,7 @@ func CreateNewWord(userId string) error {
 		return err
 	}
 
+	// TODO: move this logic to s3 services
 	wordKey := awsS3.GetWordKey(userId)
 	_, err = svc.PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(c.AwsS3Bucket),
@@ -53,7 +76,7 @@ func CreateNewWord(userId string) error {
 	return nil
 }
 
-func ReadWord(userId string) (*WordsInfo, error) {
+func ReadWords(userId string) (*WordsInfo, error) {
 	c := config.Setting()
 	svc, err := awsS3.CreateS3Client()
 	if err != nil {
@@ -90,17 +113,22 @@ func Addword(userId string, wordName string, meaning []string) error {
 		return err
 	}
 
-	wordsInfo, err := ReadWord(userId)
+	wordsInfo, err := ReadWords(userId)
 	if err != nil {
 		return err
 	}
 
-	w := Word{
-		Name:     wordName,
-		Meaning:  meaning,
-		Priority: 100,
+	if wordsInfo.existWord(wordName) {
+		i := wordsInfo.findWordIndex(wordName)
+		wordsInfo.Words[i].Priority = 100
+	} else {
+		w := Word{
+			Name:     wordName,
+			Meaning:  meaning,
+			Priority: 100,
+		}
+		wordsInfo.addWord(w)
 	}
-	wordsInfo.Words = append(wordsInfo.Words, w)
 
 	wordsInfoJSON, err := json.Marshal(wordsInfo)
 	if err != nil {
