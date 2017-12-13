@@ -7,6 +7,7 @@ import (
 )
 
 type Action struct {
+	userID     string
 	replyToken string
 	actionType ActionType
 	payloads   []string
@@ -16,9 +17,10 @@ type ActionType string
 
 type CommandTypeMap map[string]bool
 
-func CreateAction(msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSource) *Action {
+func CreateAction(uid string, msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSource) *Action {
 	a := &Action{}
 	a.replyToken = rToken
+	a.userID = uid
 
 	// If there is no msg
 	if msg == nil {
@@ -30,6 +32,7 @@ func CreateAction(msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSo
 	commandTypeMap := CommandTypeMap{
 		"add":    true,
 		"search": true,
+		"all":    true,
 	}
 
 	// Check existance of the command

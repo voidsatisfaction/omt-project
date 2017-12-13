@@ -1,6 +1,10 @@
-hash: cc6713e5855cd16bd8315e0b1daa2695ccfd0a4f4ffec6abce6d8330b9ae6acd
-updated: 2017-11-30T17:20:42.569537223+09:00
+hash: 256097465e423a0ddedeba05d49dbec14033df2c7445199384cc42e9dc62ed42
+updated: 2017-12-04T23:37:29.899500194+09:00
 imports:
+- name: github.com/aws/aws-sdk-go
+  version: 388e6676807f5968ad5eaaec0c70002f80c20b84
+  subpackages:
+  - '...'
 - name: github.com/dgrijalva/jwt-go
   version: dbeaa9332f19a944acb5736b4456cfcc02140e29
 - name: github.com/labstack/echo

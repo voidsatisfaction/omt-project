@@ -6,6 +6,7 @@ import (
 
 func createDummyAction(at ActionType, pl []string) *Action {
 	return &Action{
+		userID:     "abc",
 		replyToken: "123",
 		actionType: at,
 		payloads:   pl,
@@ -14,6 +15,7 @@ func createDummyAction(at ActionType, pl []string) *Action {
 
 func createInvalidDummyAction() *Action {
 	return &Action{
+		userID:     "abc",
 		replyToken: "123",
 		actionType: Invalid,
 		payloads:   []string{},
@@ -22,6 +24,7 @@ func createInvalidDummyAction() *Action {
 
 func createInvalidCommandDummyAction() *Action {
 	return &Action{
+		userID:     "abc",
 		replyToken: "123",
 		actionType: InvalidCommand,
 		payloads:   []string{},
@@ -47,6 +50,56 @@ func TestTreatSearchActionSuccess(t *testing.T) {
 	}
 }
 
+func TestTreatAddAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{
+			SuccessCode,
+			createDummyAction(Add, []string{"water", "水"}),
+		},
+		{
+			SuccessCode,
+			createDummyAction(Add, []string{"wind", "風"}),
+		},
+		{
+			SuccessCode,
+			createDummyAction(Add, []string{"turn", "down", "拒絶する"}),
+		},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Status
+		if actual != SuccessCode {
+			t.Errorf("Expect Status SUCCEESS, got %s", actual)
+		}
+	}
+}
+
+func TestTreatAllAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{
+			SuccessCode,
+			createDummyAction(All, []string{}),
+		},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actualResult := TreatAllAction(dummyAction)
+		actual := actualResult.Status
+		if actual != SuccessCode {
+			t.Errorf("Expect Status SUCCEESS, got %s", actual)
+		}
+	}
+}
+
 func TestTreatPredefinedAction(t *testing.T) {
 	bp := BotPhrase{}
 	bp.Setting()
@@ -57,11 +110,11 @@ func TestTreatPredefinedAction(t *testing.T) {
 	}{
 		{
 			createInvalidDummyAction(),
-			bp[Invalid],
+			string(bp[Invalid]),
 		},
 		{
 			createInvalidCommandDummyAction(),
-			bp[InvalidCommand],
+			string(bp[InvalidCommand]),
 		},
 	}
 
@@ -83,11 +136,11 @@ func TestPhraseNotFound(t *testing.T) {
 		action *Action
 	}{
 		{
-			bp[PhraseNotFound],
+			string(bp[PhraseNotFound]),
 			createDummyAction(Search, []string{"alksfmlwkemflekmlwfkwefw"}),
 		},
 		{
-			bp[PhraseNotFound],
+			string(bp[PhraseNotFound]),
 			createDummyAction(Search, []string{"asdfasda", "off", "wkejnfkwqe"}),
 		},
 	}

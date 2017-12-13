@@ -24,5 +24,7 @@ It is funny to make and even solve my problem. Wow.
 1. Make sure install docker && Set environment variables(Line bot keys)
 2. clone it to `$GOPATH/src/`
 3. `docker-compose up`
+4. enter `localhost:19000`
+5. If `Worked` shown, server is running
 
 Hot recompiling(gin) works. So, after change server-side codes, just reload it on web browser.

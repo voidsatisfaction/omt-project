@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"omt-project/services/botService"
+	"omt-project/services/userService"
+	"omt-project/services/wordService"
 
 	"github.com/labstack/echo"
 	"github.com/line/line-bot-sdk-go/linebot"
@@ -19,11 +21,17 @@ func CallbackHandlerGenerator(e *echo.Echo, bot *linebot.Client) echo.HandlerFun
 
 		for _, event := range events {
 			fmt.Printf("event: %+v\n", event)
+			fmt.Printf("userId: %+v\n", event.Source.UserID)
 			switch event.Type {
+			case linebot.EventTypeFollow:
+				uid := event.Source.UserID
+				go userService.CreateNewUser(uid)
+				go wordService.CreateNewWord(uid)
 			case linebot.EventTypeMessage:
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
-					action := botService.CreateAction(message, event.ReplyToken, event.Source)
+					uid := event.Source.UserID
+					action := botService.CreateAction(uid, message, event.ReplyToken, event.Source)
 					actionResult := botService.TreatAction(action)
 					e.Logger.Printf("message: %+v\n", message)
 					e.Logger.Printf("action: %+v\n", action)
