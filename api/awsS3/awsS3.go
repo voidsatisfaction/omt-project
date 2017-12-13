@@ -12,7 +12,6 @@ import (
 
 func CreateAwsSession() (*session.Session, error) {
 	c := config.Setting()
-	fmt.Printf("awsregion: %+v\n", c)
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(c.AwsRegion),
 		Credentials: credentials.NewStaticCredentials(c.AwsAccessKeyID, c.AwsSecretAccessKey, ""),
