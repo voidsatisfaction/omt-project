@@ -4,16 +4,17 @@ import "os"
 
 // Config is configuration of app
 type Config struct {
-	AppEnv              string
-	Port                string
-	ChannelSecret       string
-	ChannelToken        string
-	AwsRegion           string
-	AwsAccessKeyID      string
-	AwsSecretAccessKey  string
-	AwsS3Bucket         string
-	AwsS3BucketUsersKey string
-	AwsS3BucketWordsKey string
+	AppEnv                   string
+	Port                     string
+	ChannelSecret            string
+	ChannelToken             string
+	AwsRegion                string
+	AwsAccessKeyID           string
+	AwsSecretAccessKey       string
+	AwsS3Bucket              string
+	AwsS3BucketUsersKey      string
+	AwsS3BucketWordsKey      string
+	AwsS3BucketQuizTimersKey string
 }
 
 // Setting function returns configuration
@@ -37,5 +38,6 @@ func Setting() *Config {
 	c.AwsS3Bucket = "omt-project"
 	c.AwsS3BucketUsersKey = "users/"
 	c.AwsS3BucketWordsKey = "words/"
+	c.AwsS3BucketQuizTimersKey = "quizTimers/"
 	return c
 }

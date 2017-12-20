@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"omt-project/api/glosbe"
+	"omt-project/services/quizService"
 	"omt-project/services/wordService"
 	"strings"
 )
@@ -20,10 +21,24 @@ type ActionResult struct {
 	Text   string
 }
 
+func (ar *ActionResult) ServerError() *ActionResult {
+	ar.Text = "先生、今、体の調子が悪いの"
+	ar.Status = FailCode
+	return ar
+}
+
+func (ar *ActionResult) PhraseNotFound() *ActionResult {
+	bp := BotPhrase{}
+	bp.Setting()
+	ar.Text = string(bp[PhraseNotFound])
+	ar.Status = FailCode
+	return ar
+}
+
 // TreatAction is main treater of actions
 func TreatAction(a *Action) *ActionResult {
 	actionResult := &ActionResult{}
-	switch a.actionType {
+	switch a.ActionType {
 	case Invalid:
 		actionResult = TreatPredefinedAction(a)
 	case InvalidCommand:
@@ -32,10 +47,14 @@ func TreatAction(a *Action) *ActionResult {
 		// Call word search api
 		actionResult = TreatSearchAction(a)
 	case Add:
+		// Add user own phrase
 		actionResult = TreatAddAction(a)
-		// User add own phrase
 	case All:
 		actionResult = TreatAllAction(a)
+	case Set:
+		actionResult = TreatSetAction(a)
+	default:
+		panic("Server Error")
 	}
 	return actionResult
 }
@@ -44,7 +63,7 @@ func TreatSearchAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
 	// TODO: for korean user, use korean
-	phrase := strings.Join(a.payloads, "%20")
+	phrase := strings.Join(a.Payloads, "%20")
 	glosbeParameter := &glosbe.GlosbeParameter{
 		LanguageFrom: "eng",
 		LanguageTo:   "jpn",
@@ -86,12 +105,32 @@ func TreatSearchAction(a *Action) *ActionResult {
 	return ar
 }
 
+func TreatSetAction(a *Action) *ActionResult {
+	ar := &ActionResult{}
+
+	uid := a.UserID
+	timerID := a.Payloads[0]
+
+	err := a.ValidateTime()
+	if err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	if err := quizService.AddQuizTimer(uid, timerID); err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	ar.Status = SuccessCode
+	return ar
+}
+
 func TreatAddAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
 	word, meaning := a.extractWordAndMeaning()
-	uid := a.userID
-	// TODO: pre exist words should not be added just increase priority
+	uid := a.UserID
 	if err := wordService.Addword(uid, word, meaning); err != nil {
 		ar.ServerError()
 		return ar
@@ -104,7 +143,7 @@ func TreatAddAction(a *Action) *ActionResult {
 func TreatAllAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
-	uid := a.userID
+	uid := a.UserID
 	wordsInfo, err := wordService.ReadWords(uid)
 	if err != nil {
 		ar.ServerError()
@@ -120,20 +159,6 @@ func TreatPredefinedAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 	bp := BotPhrase{}
 	bp.Setting()
-	ar.Text = string(bp[a.actionType])
-	return ar
-}
-
-func (ar *ActionResult) ServerError() *ActionResult {
-	ar.Text = "先生、今、体の調子が悪いの"
-	ar.Status = FailCode
-	return ar
-}
-
-func (ar *ActionResult) PhraseNotFound() *ActionResult {
-	bp := BotPhrase{}
-	bp.Setting()
-	ar.Text = string(bp[PhraseNotFound])
-	ar.Status = FailCode
+	ar.Text = string(bp[a.ActionType])
 	return ar
 }

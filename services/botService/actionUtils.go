@@ -6,7 +6,7 @@ func (a *Action) extractWordAndMeaning() (string, []string) {
 	word := ""
 	var meaning []string
 	isWord := true
-	for _, w := range a.payloads {
+	for _, w := range a.Payloads {
 		for _, c := range w {
 			if c > '~' {
 				isWord = false
