@@ -3,7 +3,7 @@ package userService
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"io/ioutil"
 	"omt-project/api/awsS3"
 	"omt-project/config"
 	"time"
@@ -13,32 +13,32 @@ import (
 )
 
 type UserInfo struct {
-	Id                    string      `json:"id"`
-	ConsecutiveActionDays int         `json:"consecutive_action_days"`
-	LastActionTime        time.Time   `json:"last_action_time"`
-	PushTimes             []time.Time `json:"push_times"`
+	Id                    string    `json:"id"`
+	ConsecutiveActionDays int       `json:"consecutive_action_days"`
+	LastActionTime        time.Time `json:"last_action_time"`
+	PushTimes             []string  `json:"push_times"`
 }
 
-func CreateNewUser(userId string) {
+func CreateNewUser(userId string) error {
 	c := config.Setting()
 	svc, err := awsS3.CreateS3Client()
 	if err != nil {
-		return
+		return err
 	}
 
 	userInfo := UserInfo{
 		Id: userId,
 		ConsecutiveActionDays: 0,
 		LastActionTime:        time.Now(),
-		PushTimes:             []time.Time{},
+		PushTimes:             []string{},
 	}
 
 	userInfoJson, err := json.Marshal(userInfo)
 	if err != nil {
-		return
+		return err
 	}
 
-	userKey := fmt.Sprintf("%s%s", c.AwsS3BucketUsersKey, userId)
+	userKey := awsS3.GetUserKey(userId)
 	_, err = svc.PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(c.AwsS3Bucket),
 		Key:    aws.String(userKey),
@@ -47,6 +47,37 @@ func CreateNewUser(userId string) {
 	})
 
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
+}
+
+func ReadUserInfo(userId string) (*UserInfo, error) {
+	c := config.Setting()
+	svc, err := awsS3.CreateS3Client()
+	if err != nil {
+		return nil, err
+	}
+
+	userKey := awsS3.GetUserKey(userId)
+	res, err := svc.GetObject(&s3.GetObjectInput{
+		Bucket: aws.String(c.AwsS3Bucket),
+		Key:    aws.String(userKey),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	defer res.Body.Close()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	ui := &UserInfo{}
+	if err := json.Unmarshal(body, ui); err != nil {
+		return nil, err
+	}
+
+	return ui, nil
 }
