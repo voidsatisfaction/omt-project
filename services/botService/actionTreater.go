@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"omt-project/api/glosbe"
-	"omt-project/services/quizService"
+	"omt-project/services/timerService"
 	"omt-project/services/wordService"
 	"strings"
 )
@@ -117,7 +117,7 @@ func TreatSetAction(a *Action) *ActionResult {
 		return ar
 	}
 
-	if err := quizService.AddQuizTimer(uid, timerID); err != nil {
+	if err := timerService.AddQuizTimer(uid, timerID); err != nil {
 		ar.ServerError()
 		return ar
 	}

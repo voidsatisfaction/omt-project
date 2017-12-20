@@ -1,4 +1,4 @@
-package quizService
+package timerService
 
 import (
 	"bytes"
