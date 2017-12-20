@@ -2,9 +2,11 @@ package botService
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"omt-project/api/glosbe"
 	"omt-project/services/timerService"
+	"omt-project/services/userService"
 	"omt-project/services/wordService"
 	"strings"
 )
@@ -19,6 +21,12 @@ type ActionStatusCode string
 type ActionResult struct {
 	Status ActionStatusCode
 	Text   string
+}
+
+func newActionResult() *ActionResult {
+	return &ActionResult{
+		Status: SuccessCode,
+	}
 }
 
 func (ar *ActionResult) ServerError() *ActionResult {
@@ -37,7 +45,7 @@ func (ar *ActionResult) PhraseNotFound() *ActionResult {
 
 // TreatAction is main treater of actions
 func TreatAction(a *Action) *ActionResult {
-	actionResult := &ActionResult{}
+	actionResult := newActionResult()
 	switch a.ActionType {
 	case Invalid:
 		actionResult = TreatPredefinedAction(a)
@@ -53,6 +61,8 @@ func TreatAction(a *Action) *ActionResult {
 		actionResult = TreatAllAction(a)
 	case Set:
 		actionResult = TreatSetAction(a)
+	case TimerAll:
+		actionResult = TreatTimerAllAction(a)
 	default:
 		panic("Server Error")
 	}
@@ -106,7 +116,7 @@ func TreatSearchAction(a *Action) *ActionResult {
 }
 
 func TreatSetAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 
 	uid := a.UserID
 	timerID := a.Payloads[0]
@@ -117,17 +127,34 @@ func TreatSetAction(a *Action) *ActionResult {
 		return ar
 	}
 
+	// TODO: add quiz timer to UserInfo
 	if err := timerService.AddQuizTimer(uid, timerID); err != nil {
 		ar.ServerError()
 		return ar
 	}
+
+	return ar
+}
+
+func TreatTimerAllAction(a *Action) *ActionResult {
+	ar := newActionResult()
+
+	uid := a.UserID
+	userInfo, err := userService.ReadUserInfo(uid)
+	if err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	ar.Text = strings.Join(userInfo.PushTimes, "\n")
+	fmt.Printf("%+v", ar)
 
 	ar.Status = SuccessCode
 	return ar
 }
 
 func TreatAddAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 
 	word, meaning := a.extractWordAndMeaning()
 	uid := a.UserID
@@ -141,7 +168,7 @@ func TreatAddAction(a *Action) *ActionResult {
 }
 
 func TreatAllAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 
 	uid := a.UserID
 	wordsInfo, err := wordService.ReadWords(uid)
@@ -156,7 +183,7 @@ func TreatAllAction(a *Action) *ActionResult {
 }
 
 func TreatPredefinedAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 	bp := BotPhrase{}
 	bp.Setting()
 	ar.Text = string(bp[a.ActionType])

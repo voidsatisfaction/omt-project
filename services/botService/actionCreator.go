@@ -21,10 +21,11 @@ const (
 	InvalidCommand ActionType = "INVALID_COMMAND"
 	PhraseNotFound ActionType = "PHRASE_NOT_FOUND"
 
-	Add    ActionType = "add"
-	Search ActionType = "search"
-	All    ActionType = "all"
-	Set    ActionType = "set"
+	Add      ActionType = "add"
+	Search   ActionType = "search"
+	All      ActionType = "all"
+	Set      ActionType = "set"
+	TimerAll ActionType = "timer_all"
 )
 
 type CommandTypeMap map[string]bool
@@ -42,10 +43,11 @@ func CreateAction(uid string, msg *linebot.TextMessage, rToken string, eSrc *lin
 
 	// Make a command map
 	commandTypeMap := CommandTypeMap{
-		"add":    true,
-		"search": true,
-		"all":    true,
-		"set":    true,
+		"add":      true,
+		"search":   true,
+		"all":      true,
+		"set":      true,
+		"timerall": true,
 	}
 
 	// Check existance of the command

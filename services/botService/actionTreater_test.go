@@ -96,6 +96,25 @@ func TestTreatSetAction(t *testing.T) {
 	}
 }
 
+func TestTreatTimerAllAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{SuccessCode, createDummyAction(TimerAll, []string{})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actualResult := TreatAction(dummyAction)
+		expect := test.expect
+		actual := actualResult.Status
+		if actual != expect {
+			t.Errorf("Expect Status %+v, got %s", expect, actual)
+		}
+	}
+}
+
 func TestTreatPredefinedAction(t *testing.T) {
 	bp := BotPhrase{}
 	bp.Setting()
