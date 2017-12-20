@@ -10,7 +10,7 @@ func isHour(h string) bool {
 	if err != nil {
 		return false
 	}
-	if hNum >= 0 && hNum <= 24 {
+	if hNum >= 0 && hNum <= 23 {
 		return true
 	}
 	return false
