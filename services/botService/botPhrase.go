@@ -11,17 +11,6 @@ type StaticBotMessage string
 
 type BotPhrase map[ActionType]StaticBotMessage
 
-const (
-	Invalid = "INVALID"
-
-	InvalidCommand = "INVALID_COMMAND"
-	PhraseNotFound = "PHRASE_NOT_FOUND"
-
-	Add    = "add"
-	Search = "search"
-	All    = "all"
-)
-
 func (bp BotPhrase) Setting() BotPhrase {
 	bp[Invalid] = `先生は、君が何を話しているかわからないの。`
 	bp[InvalidCommand] = `

@@ -15,6 +15,18 @@ type Action struct {
 
 type ActionType string
 
+const (
+	Invalid ActionType = "INVALID"
+
+	InvalidCommand ActionType = "INVALID_COMMAND"
+	PhraseNotFound ActionType = "PHRASE_NOT_FOUND"
+
+	Add    ActionType = "add"
+	Search ActionType = "search"
+	All    ActionType = "all"
+	Set    ActionType = "set"
+)
+
 type CommandTypeMap map[string]bool
 
 func CreateAction(uid string, msg *linebot.TextMessage, rToken string, eSrc *linebot.EventSource) *Action {
@@ -33,6 +45,7 @@ func CreateAction(uid string, msg *linebot.TextMessage, rToken string, eSrc *lin
 		"add":    true,
 		"search": true,
 		"all":    true,
+		"set":    true,
 	}
 
 	// Check existance of the command

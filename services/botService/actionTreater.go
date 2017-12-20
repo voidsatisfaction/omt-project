@@ -20,7 +20,7 @@ type ActionResult struct {
 	Text   string
 }
 
-// TreatAction is manager of actions
+// TreatAction is main treater of actions
 func TreatAction(a *Action) *ActionResult {
 	actionResult := &ActionResult{}
 	switch a.actionType {
