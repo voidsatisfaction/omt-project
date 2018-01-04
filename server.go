@@ -33,6 +33,11 @@ func main() {
 		return c.String(http.StatusOK, "Worked")
 	})
 
+	e.GET("/quiz/:userId", func(c echo.Context) error {
+		userId := c.Param("userId")
+		return c.String(http.StatusOK, "quiz page"+userId)
+	})
+
 	e.POST("/bot/callback", botHandler.CallbackHandlerGenerator(e, bot))
 
 	// Listen

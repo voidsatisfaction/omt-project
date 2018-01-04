@@ -2,8 +2,10 @@ package botService
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"omt-project/api/glosbe"
+	"omt-project/config"
 	"omt-project/services/timerService"
 	"omt-project/services/userService"
 	"omt-project/services/wordService"
@@ -63,7 +65,7 @@ func TreatAction(a *Action) *ActionResult {
 	case TimerAll:
 		actionResult = TreatTimerAllAction(a)
 	case Quiz:
-
+		actionResult = TreatQuizAction(a)
 	default:
 		panic("Treat Action Problem: Server Error")
 	}
@@ -188,8 +190,9 @@ func TreatAllAction(a *Action) *ActionResult {
 }
 
 func TreatQuizAction(a *Action) *ActionResult {
+	c := config.Setting()
 	ar := newActionResult()
-
+	ar.Text = fmt.Sprintf("%s/quiz/%s", c.Host, a.UserID)
 	return ar
 }
 
