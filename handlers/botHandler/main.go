@@ -30,13 +30,14 @@ func CallbackHandlerGenerator(e *echo.Echo, bot *linebot.Client) echo.HandlerFun
 			case linebot.EventTypeMessage:
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
+					e.Logger.Printf("message created: %+v\n", message)
 					uid := event.Source.UserID
 					action := botService.CreateAction(uid, message, event.ReplyToken, event.Source)
+					e.Logger.Printf("action created: %+v\n", action)
 					actionResult := botService.TreatAction(action)
-					e.Logger.Printf("message: %+v\n", message)
-					e.Logger.Printf("action: %+v\n", action)
-					e.Logger.Printf("actionResult: %+v\n", actionResult)
+					e.Logger.Printf("actionResult created: %+v\n", actionResult)
 					resMessage := linebot.NewTextMessage(actionResult.Text)
+					e.Logger.Printf(": %+v\n", actionResult)
 					if _, err = bot.ReplyMessage(event.ReplyToken, resMessage).Do(); err != nil {
 						e.Logger.Error(err)
 					}
