@@ -17,6 +17,8 @@
           </div>
           <h2>問題</h2>
           <form action="/quiz" method="post">
+            <input class="form-control" name="question-nums" type="hidden" value={{.questionNums}}>
+            <input class="form-control" name="user-id" type="hidden" value={{.userId}}>
             {{range $i, $word := .words}}
               <div class="form-group">
                 <h4>{{$word.Meaning}}</h4>

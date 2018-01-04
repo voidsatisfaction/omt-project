@@ -37,6 +37,7 @@ func main() {
 	})
 
 	e.GET("/quiz/:userId", webHandler.GetQuizHandlerGenerator(e))
+	e.POST("/quiz", webHandler.PostQuizHandlerGenerator(e))
 
 	e.POST("/bot/callback", botHandler.CallbackHandlerGenerator(e, bot))
 
