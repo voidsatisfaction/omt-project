@@ -1,6 +1,7 @@
 package botService
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -183,6 +184,24 @@ func TestTreatSearchActionSuccess(t *testing.T) {
 		actual := actionResult.Text
 		if len(actual) <= 0 {
 			t.Errorf("Expect string size > 0, got %d on Parameter: %+v", len(actual), dummyAction.Payloads)
+		}
+	}
+}
+
+func TestQuizActionSuccess(t *testing.T) {
+	var tests = []struct {
+		action *Action
+	}{
+		{createDummyAction(Quiz, []string{})},
+		{createDummyAction(Quiz, []string{"3"})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Text
+		if !strings.HasPrefix(actual, "http") {
+			t.Errorf("Expect url, got %+v", actual)
 		}
 	}
 }

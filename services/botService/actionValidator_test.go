@@ -2,7 +2,6 @@ package botService
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -26,7 +25,6 @@ func TestValidateTime(t *testing.T) {
 		a := test.action
 		expect := test.expect
 		actual := a.ValidateTime()
-		fmt.Println(actual)
 		if !reflect.DeepEqual(expect, actual) {
 			t.Errorf("Expect: %+v, got: %+v", test.expect, actual)
 		}
