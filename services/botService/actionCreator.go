@@ -25,7 +25,7 @@ const (
 	Search   ActionType = "search"
 	All      ActionType = "all"
 	Set      ActionType = "set"
-	TimerAll ActionType = "timer_all"
+	TimerAll ActionType = "timerall"
 )
 
 type CommandTypeMap map[string]bool

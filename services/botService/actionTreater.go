@@ -64,7 +64,7 @@ func TreatAction(a *Action) *ActionResult {
 	case TimerAll:
 		actionResult = TreatTimerAllAction(a)
 	default:
-		panic("Server Error")
+		panic("Treat Action Problem: Server Error")
 	}
 	return actionResult
 }
@@ -119,7 +119,7 @@ func TreatSetAction(a *Action) *ActionResult {
 	ar := newActionResult()
 
 	uid := a.UserID
-	timerID := a.Payloads[0]
+	timerId := a.Payloads[0]
 
 	err := a.ValidateTime()
 	if err != nil {
@@ -128,7 +128,12 @@ func TreatSetAction(a *Action) *ActionResult {
 	}
 
 	// TODO: add quiz timer to UserInfo
-	if err := timerService.AddQuizTimer(uid, timerID); err != nil {
+	if err := timerService.AddQuizTimer(uid, timerId); err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	if err != userService.AddPushTimes(uid, timerId) {
 		ar.ServerError()
 		return ar
 	}
