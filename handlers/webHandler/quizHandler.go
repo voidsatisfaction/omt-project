@@ -62,8 +62,25 @@ func PostQuizHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
 			goodAns = append(goodAns, ga)
 		}
 
-		// TODO: Update priority
-		// TODO: Push result
+		// Check correctness and apply results to awsS3
+		// Change word priority
+		qc, err := quizService.NewQuizController(userId)
+		if err != nil {
+			e.Logger.Errorf("Make new quiz controller error %+v", err)
+			e.Logger.Errorf("%v\n", err)
+			return c.Render(http.StatusBadGateway, "notFound.html", "not Found")
+		}
+		srs := quizService.GetScoreResults(userAns, goodAns)
+		qc.ApplyMeaningWordQuizResult(srs)
+
+		err = qc.UpdateWordsInfo(userId)
+		if err != nil {
+			e.Logger.Errorf("Update Words Info failed %+v", err)
+			return c.Render(http.StatusBadGateway, "notFound.html", "not Found")
+		}
+		fmt.Printf("qc: %+v", qc.Words)
+
+		// TODO: Push result to the user
 		fmt.Printf("%+v %+v\n", userId, questionNums)
 		return nil
 	}

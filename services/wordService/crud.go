@@ -15,6 +15,14 @@ type WordsInfo struct {
 	Words Words `json:"words"`
 }
 
+func NewWordsInfo() *WordsInfo {
+	return &WordsInfo{}
+}
+
+func (wi *WordsInfo) AssignWords(ws Words) {
+	wi.Words = ws
+}
+
 func (wi *WordsInfo) addWord(w Word) {
 	wi.Words = append(wi.Words, w)
 }
@@ -104,6 +112,33 @@ func ReadWords(userId string) (*WordsInfo, error) {
 	}
 
 	return wi, nil
+}
+
+func UpdateNewWord(userId string, wi *WordsInfo) error {
+	c := config.Setting()
+	svc, err := awsS3.CreateS3Client()
+	if err != nil {
+		return err
+	}
+
+	wordsInfoJson, err := json.Marshal(wi)
+	if err != nil {
+		return err
+	}
+
+	// TODO: move this logic to s3 services
+	wordKey := awsS3.GetWordKey(userId)
+	_, err = svc.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(c.AwsS3Bucket),
+		Key:    aws.String(wordKey),
+		// TODO: casting directly []byte() is not efficient refer: https://qiita.com/ikawaha/items/3c3994559dfeffb9f8c9
+		Body: bytes.NewReader(wordsInfoJson),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func Addword(userId string, wordName string, meaning []string) error {
