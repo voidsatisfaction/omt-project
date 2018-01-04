@@ -81,7 +81,6 @@ func PostQuizHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
 		fmt.Printf("qc: %+v", qc.Words)
 
 		// TODO: Push result to the user
-		fmt.Printf("%+v %+v\n", userId, questionNums)
 		return nil
 	}
 }
