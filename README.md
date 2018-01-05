@@ -2,6 +2,10 @@
 
 ![qr code](./qr.png)
 
+You can san this qr code at Line app to add "Hiyoko teacher"
+
+![hiyoko sensei profile](./hiyoko_sensei_profile.png)
+
 This is line bot named "Hiyoko teacher" who is specialist of word exams
 
 ## Motivation
@@ -18,6 +22,9 @@ It is funny to make and even solve my problem. Wow.
 
 1. echo(golang)
 2. Line Messaging API
+3. AWS S3
+4. Heroku
+5. Travis CI
 
 ## Developement
 
