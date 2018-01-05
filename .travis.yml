@@ -1,0 +1,9 @@
+language: go
+go:
+  - 1.9.x
+go_import_path: omt-project
+install:
+  - go get -v github.com/Masterminds/glide
+  - glide install
+script:
+  - go test ./...
