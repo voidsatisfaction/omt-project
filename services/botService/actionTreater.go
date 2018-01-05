@@ -2,8 +2,12 @@ package botService
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"omt-project/api/glosbe"
+	"omt-project/config"
+	"omt-project/services/timerService"
+	"omt-project/services/userService"
 	"omt-project/services/wordService"
 	"strings"
 )
@@ -20,10 +24,30 @@ type ActionResult struct {
 	Text   string
 }
 
-// TreatAction is manager of actions
+func newActionResult() *ActionResult {
+	return &ActionResult{
+		Status: SuccessCode,
+	}
+}
+
+func (ar *ActionResult) ServerError() *ActionResult {
+	ar.Text = "先生、今、体の調子が悪いの"
+	ar.Status = FailCode
+	return ar
+}
+
+func (ar *ActionResult) PhraseNotFound() *ActionResult {
+	bp := BotPhrase{}
+	bp.Setting()
+	ar.Text = string(bp[PhraseNotFound])
+	ar.Status = FailCode
+	return ar
+}
+
+// TreatAction is main treater of actions
 func TreatAction(a *Action) *ActionResult {
-	actionResult := &ActionResult{}
-	switch a.actionType {
+	actionResult := newActionResult()
+	switch a.ActionType {
 	case Invalid:
 		actionResult = TreatPredefinedAction(a)
 	case InvalidCommand:
@@ -32,10 +56,18 @@ func TreatAction(a *Action) *ActionResult {
 		// Call word search api
 		actionResult = TreatSearchAction(a)
 	case Add:
+		// Add user own phrase
 		actionResult = TreatAddAction(a)
-		// User add own phrase
 	case All:
 		actionResult = TreatAllAction(a)
+	case Set:
+		actionResult = TreatSetAction(a)
+	case TimerAll:
+		actionResult = TreatTimerAllAction(a)
+	case Quiz:
+		actionResult = TreatQuizAction(a)
+	default:
+		panic("Treat Action Problem: Server Error")
 	}
 	return actionResult
 }
@@ -44,7 +76,7 @@ func TreatSearchAction(a *Action) *ActionResult {
 	ar := &ActionResult{}
 
 	// TODO: for korean user, use korean
-	phrase := strings.Join(a.payloads, "%20")
+	phrase := strings.Join(a.Payloads, "%20")
 	glosbeParameter := &glosbe.GlosbeParameter{
 		LanguageFrom: "eng",
 		LanguageTo:   "jpn",
@@ -86,12 +118,53 @@ func TreatSearchAction(a *Action) *ActionResult {
 	return ar
 }
 
+func TreatSetAction(a *Action) *ActionResult {
+	ar := newActionResult()
+
+	uid := a.UserID
+	timerId := a.Payloads[0]
+
+	err := a.ValidateTime()
+	if err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	// TODO: add quiz timer to UserInfo
+	if err := timerService.AddQuizTimer(uid, timerId); err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	if err != userService.AddPushTimes(uid, timerId) {
+		ar.ServerError()
+		return ar
+	}
+
+	return ar
+}
+
+func TreatTimerAllAction(a *Action) *ActionResult {
+	ar := newActionResult()
+
+	uid := a.UserID
+	userInfo, err := userService.ReadUserInfo(uid)
+	if err != nil {
+		ar.ServerError()
+		return ar
+	}
+
+	ar.Text = strings.Join(userInfo.PushTimes, "\n")
+
+	ar.Status = SuccessCode
+	return ar
+}
+
 func TreatAddAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 
 	word, meaning := a.extractWordAndMeaning()
-	uid := a.userID
-	// TODO: pre exist words should not be added just increase priority
+	uid := a.UserID
 	if err := wordService.Addword(uid, word, meaning); err != nil {
 		ar.ServerError()
 		return ar
@@ -102,9 +175,9 @@ func TreatAddAction(a *Action) *ActionResult {
 }
 
 func TreatAllAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 
-	uid := a.userID
+	uid := a.UserID
 	wordsInfo, err := wordService.ReadWords(uid)
 	if err != nil {
 		ar.ServerError()
@@ -116,24 +189,17 @@ func TreatAllAction(a *Action) *ActionResult {
 	return ar
 }
 
+func TreatQuizAction(a *Action) *ActionResult {
+	c := config.Setting()
+	ar := newActionResult()
+	ar.Text = fmt.Sprintf("%s/quiz/new/%s", c.Host, a.UserID)
+	return ar
+}
+
 func TreatPredefinedAction(a *Action) *ActionResult {
-	ar := &ActionResult{}
+	ar := newActionResult()
 	bp := BotPhrase{}
 	bp.Setting()
-	ar.Text = string(bp[a.actionType])
-	return ar
-}
-
-func (ar *ActionResult) ServerError() *ActionResult {
-	ar.Text = "先生、今、体の調子が悪いの"
-	ar.Status = FailCode
-	return ar
-}
-
-func (ar *ActionResult) PhraseNotFound() *ActionResult {
-	bp := BotPhrase{}
-	bp.Setting()
-	ar.Text = string(bp[PhraseNotFound])
-	ar.Status = FailCode
+	ar.Text = string(bp[a.ActionType])
 	return ar
 }

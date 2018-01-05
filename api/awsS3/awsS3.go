@@ -39,3 +39,8 @@ func GetUserKey(userId string) string {
 	c := config.Setting()
 	return fmt.Sprintf("%s%s", c.AwsS3BucketUsersKey, userId)
 }
+
+func GetTimerKey(timerId string) string {
+	c := config.Setting()
+	return fmt.Sprintf("%s%s", c.AwsS3BucketQuizTimersKey, timerId)
+}

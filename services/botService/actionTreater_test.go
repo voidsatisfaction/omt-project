@@ -1,52 +1,34 @@
 package botService
 
 import (
+	"strings"
 	"testing"
 )
 
 func createDummyAction(at ActionType, pl []string) *Action {
 	return &Action{
-		userID:     "abc",
-		replyToken: "123",
-		actionType: at,
-		payloads:   pl,
+		UserID:     "abc",
+		ReplyToken: "123",
+		ActionType: at,
+		Payloads:   pl,
 	}
 }
 
 func createInvalidDummyAction() *Action {
 	return &Action{
-		userID:     "abc",
-		replyToken: "123",
-		actionType: Invalid,
-		payloads:   []string{},
+		UserID:     "abc",
+		ReplyToken: "123",
+		ActionType: Invalid,
+		Payloads:   []string{},
 	}
 }
 
 func createInvalidCommandDummyAction() *Action {
 	return &Action{
-		userID:     "abc",
-		replyToken: "123",
-		actionType: InvalidCommand,
-		payloads:   []string{},
-	}
-}
-
-func TestTreatSearchActionSuccess(t *testing.T) {
-	var tests = []struct {
-		action *Action
-	}{
-		{createDummyAction(Search, []string{"water"})},
-		{createDummyAction(Search, []string{"take", "off"})},
-		{createDummyAction(Search, []string{"in", "front", "of"})},
-	}
-
-	for _, test := range tests {
-		dummyAction := test.action
-		actionResult := TreatAction(dummyAction)
-		actual := actionResult.Text
-		if len(actual) <= 0 {
-			t.Errorf("Expect string size > 0, got %d on Parameter: %+v", len(actual), dummyAction.payloads)
-		}
+		UserID:     "abc",
+		ReplyToken: "123",
+		ActionType: InvalidCommand,
+		Payloads:   []string{},
 	}
 }
 
@@ -55,25 +37,16 @@ func TestTreatAddAction(t *testing.T) {
 		expect ActionStatusCode
 		action *Action
 	}{
-		{
-			SuccessCode,
-			createDummyAction(Add, []string{"water", "水"}),
-		},
-		{
-			SuccessCode,
-			createDummyAction(Add, []string{"wind", "風"}),
-		},
-		{
-			SuccessCode,
-			createDummyAction(Add, []string{"turn", "down", "拒絶する"}),
-		},
+		{SuccessCode, createDummyAction(Add, []string{"water", "水"})},
+		{SuccessCode, createDummyAction(Add, []string{"wind", "風"})},
+		{SuccessCode, createDummyAction(Add, []string{"turn", "down", "拒絶する"})},
 	}
 
 	for _, test := range tests {
 		dummyAction := test.action
 		actionResult := TreatAction(dummyAction)
 		actual := actionResult.Status
-		if actual != SuccessCode {
+		if actual != test.expect {
 			t.Errorf("Expect Status SUCCEESS, got %s", actual)
 		}
 	}
@@ -94,8 +67,51 @@ func TestTreatAllAction(t *testing.T) {
 		dummyAction := test.action
 		actualResult := TreatAllAction(dummyAction)
 		actual := actualResult.Status
-		if actual != SuccessCode {
+		if actual != test.expect {
 			t.Errorf("Expect Status SUCCEESS, got %s", actual)
+		}
+	}
+}
+
+func TestTreatSetAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{SuccessCode, createDummyAction(Set, []string{"12:34"})},
+		{SuccessCode, createDummyAction(Set, []string{"02:34"})},
+		{SuccessCode, createDummyAction(Set, []string{"2:34"})},
+		{SuccessCode, createDummyAction(Set, []string{"2:00"})},
+		{FailCode, createDummyAction(Set, []string{"123:34"})},
+		{FailCode, createDummyAction(Set, []string{"1234"})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actualResult := TreatAction(dummyAction)
+		expect := test.expect
+		actual := actualResult.Status
+		if actual != test.expect {
+			t.Errorf("Expect Status %+v, got %s", expect, actual)
+		}
+	}
+}
+
+func TestTreatTimerAllAction(t *testing.T) {
+	var tests = []struct {
+		expect ActionStatusCode
+		action *Action
+	}{
+		{SuccessCode, createDummyAction(TimerAll, []string{})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actualResult := TreatAction(dummyAction)
+		expect := test.expect
+		actual := actualResult.Status
+		if actual != expect {
+			t.Errorf("Expect Status %+v, got %s", expect, actual)
 		}
 	}
 }
@@ -108,14 +124,8 @@ func TestTreatPredefinedAction(t *testing.T) {
 		action *Action
 		expect string
 	}{
-		{
-			createInvalidDummyAction(),
-			string(bp[Invalid]),
-		},
-		{
-			createInvalidCommandDummyAction(),
-			string(bp[InvalidCommand]),
-		},
+		{createInvalidDummyAction(), string(bp[Invalid])},
+		{createInvalidCommandDummyAction(), string(bp[InvalidCommand])},
 	}
 
 	for _, test := range tests {
@@ -153,8 +163,45 @@ func TestPhraseNotFound(t *testing.T) {
 		if expect != actual {
 			t.Errorf(
 				"Expect %s, got %s on Parameter: %+v",
-				expect, actual, dummyAction.payloads,
+				expect, actual, dummyAction.Payloads,
 			)
+		}
+	}
+}
+
+func TestTreatSearchActionSuccess(t *testing.T) {
+	var tests = []struct {
+		action *Action
+	}{
+		{createDummyAction(Search, []string{"water"})},
+		{createDummyAction(Search, []string{"take", "off"})},
+		{createDummyAction(Search, []string{"in", "front", "of"})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Text
+		if len(actual) <= 0 {
+			t.Errorf("Expect string size > 0, got %d on Parameter: %+v", len(actual), dummyAction.Payloads)
+		}
+	}
+}
+
+func TestQuizActionSuccess(t *testing.T) {
+	var tests = []struct {
+		action *Action
+	}{
+		{createDummyAction(Quiz, []string{})},
+		{createDummyAction(Quiz, []string{"3"})},
+	}
+
+	for _, test := range tests {
+		dummyAction := test.action
+		actionResult := TreatAction(dummyAction)
+		actual := actionResult.Text
+		if !strings.HasPrefix(actual, "http") {
+			t.Errorf("Expect url, got %+v", actual)
 		}
 	}
 }

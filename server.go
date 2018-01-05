@@ -6,6 +6,8 @@ import (
 
 	"omt-project/config"
 	"omt-project/handlers/botHandler"
+	"omt-project/handlers/webHandler"
+	"omt-project/templateEngine"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -16,6 +18,7 @@ func main() {
 	// Setup
 	e := echo.New()
 	cfg := config.Setting()
+	e.Renderer = templateEngine.NewHtmlTemplateEngine()
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -32,6 +35,10 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Worked")
 	})
+
+	e.POST("/quiz", webHandler.PostQuizHandlerGenerator(e))
+	e.GET("/quiz/new/:userId", webHandler.GetQuizHandlerGenerator(e))
+	e.POST("/quiz/result", webHandler.GetQuizResultHandlerGenerator(e))
 
 	e.POST("/bot/callback", botHandler.CallbackHandlerGenerator(e, bot))
 

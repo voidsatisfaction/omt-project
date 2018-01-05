@@ -1,12 +1,14 @@
 package botService
 
-import "fmt"
+import (
+	"strings"
+)
 
 func (a *Action) extractWordAndMeaning() (string, []string) {
-	word := ""
 	var meaning []string
+	var word []string
 	isWord := true
-	for _, w := range a.payloads {
+	for _, w := range a.Payloads {
 		for _, c := range w {
 			if c > '~' {
 				isWord = false
@@ -16,8 +18,8 @@ func (a *Action) extractWordAndMeaning() (string, []string) {
 		if !isWord {
 			meaning = append(meaning, w)
 		} else {
-			word = fmt.Sprintf("%s %s", word, w)
+			word = append(word, w)
 		}
 	}
-	return word, meaning
+	return strings.Join(word, " "), meaning
 }
