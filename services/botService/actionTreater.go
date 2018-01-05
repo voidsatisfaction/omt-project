@@ -192,7 +192,7 @@ func TreatAllAction(a *Action) *ActionResult {
 func TreatQuizAction(a *Action) *ActionResult {
 	c := config.Setting()
 	ar := newActionResult()
-	ar.Text = fmt.Sprintf("%s/quiz/%s", c.Host, a.UserID)
+	ar.Text = fmt.Sprintf("%s/quiz/new/%s", c.Host, a.UserID)
 	return ar
 }
 

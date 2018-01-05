@@ -200,7 +200,7 @@ func TestQuizActionSuccess(t *testing.T) {
 		dummyAction := test.action
 		actionResult := TreatAction(dummyAction)
 		actual := actionResult.Text
-		if !strings.HasPrefix(actual, "https") {
+		if !strings.HasPrefix(actual, "http") {
 			t.Errorf("Expect url, got %+v", actual)
 		}
 	}

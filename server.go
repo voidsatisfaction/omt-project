@@ -36,8 +36,9 @@ func main() {
 		return c.String(http.StatusOK, "Worked")
 	})
 
-	e.GET("/quiz/:userId", webHandler.GetQuizHandlerGenerator(e))
 	e.POST("/quiz", webHandler.PostQuizHandlerGenerator(e))
+	e.GET("/quiz/new/:userId", webHandler.GetQuizHandlerGenerator(e))
+	e.POST("/quiz/result", webHandler.GetQuizResultHandlerGenerator(e))
 
 	e.POST("/bot/callback", botHandler.CallbackHandlerGenerator(e, bot))
 

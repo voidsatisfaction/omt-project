@@ -27,13 +27,14 @@ func Setting() *Config {
 		c.Port = "9001"
 		c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
 		c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
+		c.Host = "http://localhost:19000"
 	case "PROD":
 		c.AppEnv = "PROD"
 		c.Port = os.Getenv("PORT")
 		c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
 		c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
+		c.Host = "https://omt-project.herokuapp.com"
 	}
-	c.Host = "https://omt-project.herokuapp.com"
 	c.AwsRegion = os.Getenv("AWS_REGION")
 	c.AwsAccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
 	c.AwsSecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")

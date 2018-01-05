@@ -57,8 +57,8 @@ func (qc *QuizController) updatetWordPriority(srs ScoreResults) {
 	oldWords := qc.Words
 	for _, sr := range srs {
 		// TODO: It is O(n*m)
-		newWordName := sr.word
-		correctNess := sr.correctness
+		newWordName := sr.Word
+		correctNess := sr.Correctness
 		for i, oldWord := range oldWords {
 			oldWordName := oldWord.Name
 			if oldWordName == newWordName {
@@ -89,8 +89,8 @@ func calculateNoCorrectPriority(priority int) int {
 type ScoreResults []*ScoreResult
 
 type ScoreResult struct {
-	word        string
-	correctness bool
+	Word        string
+	Correctness bool
 }
 
 func GetScoreResults(userAns []string, goodAns []string) ScoreResults {

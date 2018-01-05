@@ -3,9 +3,12 @@ package webHandler
 import (
 	"fmt"
 	"net/http"
+	"net/url"
+	"omt-project/config"
 	"omt-project/services/quizService"
 	"omt-project/services/userService"
 	"omt-project/templateEngine"
+	"path"
 	"strconv"
 
 	"github.com/labstack/echo"
@@ -73,6 +76,7 @@ func PostQuizHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
 		srs := quizService.GetScoreResults(userAns, goodAns)
 		qc.ApplyMeaningWordQuizResult(srs)
 
+		// Update Words on S3
 		err = qc.UpdateWordsInfo(userId)
 		if err != nil {
 			e.Logger.Errorf("Update Words Info failed %+v", err)
@@ -80,7 +84,76 @@ func PostQuizHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
 		}
 		fmt.Printf("qc: %+v", qc.Words)
 
-		// TODO: Push result to the user
-		return nil
+		// For redirect url quiz results
+		redirectUrl, err := createQuizResultUrl(srs, userId)
+		if err != nil {
+			e.Logger.Errorf("Url setting is not valid: %+v", err)
+			return c.Render(http.StatusBadGateway, "notFound.html", "not Found")
+		}
+
+		return c.Redirect(http.StatusTemporaryRedirect, redirectUrl)
 	}
+}
+
+func GetQuizResultHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		qp := c.QueryParams()
+		userId := qp.Get("userId")
+		words := qp["words"]
+		correctness := qp["correctness"]
+		n := len(words)
+
+		boolCorrectness := make([]bool, 0, n)
+		for _, cp := range correctness {
+			if cp == "1" {
+				boolCorrectness = append(boolCorrectness, true)
+			} else {
+				boolCorrectness = append(boolCorrectness, false)
+			}
+		}
+
+		srs := make(quizService.ScoreResults, 0, n)
+		correct := 0
+		for i := 0; i < n; i++ {
+			sr := &quizService.ScoreResult{
+				Word:        words[i],
+				Correctness: boolCorrectness[i],
+			}
+			srs = append(srs, sr)
+			if boolCorrectness[i] {
+				correct++
+			}
+		}
+
+		data := templateEngine.NewData()
+		data.Add("userId", userId)
+		data.Add("srs", srs)
+		data.Add("totalAnswer", n)
+		data.Add("correctAnswer", correct)
+
+		return c.Render(http.StatusOK, "quizResult.html", data)
+	}
+}
+
+func createQuizResultUrl(srs quizService.ScoreResults, userId string) (string, error) {
+	// add basic url
+	cfg := config.Setting()
+	baseUrl, err := url.Parse(cfg.Host)
+	if err != nil {
+		return "", err
+	}
+	baseUrl.Path = path.Join(baseUrl.Path, "/quiz/result")
+	// add query parameter
+	v := url.Values{}
+	v.Set("userId", userId)
+	for _, sr := range srs {
+		v.Add("words", sr.Word)
+		if sr.Correctness == true {
+			v.Add("correctness", "1")
+		} else {
+			v.Add("correctness", "0")
+		}
+	}
+	baseUrl.RawQuery = v.Encode()
+	return baseUrl.String(), nil
 }
