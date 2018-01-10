@@ -5,9 +5,9 @@ import (
 	"testing"
 )
 
-func TestReadQuizTimer(t *testing.T) {
+func TestGetQuizTimerMap(t *testing.T) {
 	timerId := "2:34"
-	qtm, _ := ReadQuizTimer(timerId)
+	qtm, _ := GetQuizTimerMap(timerId)
 	fmt.Printf("%+v\n", qtm)
 }
 
@@ -32,6 +32,5 @@ func TestExistQuizTimer(t *testing.T) {
 			t.Errorf("ExistQuizTimer failed")
 			t.Errorf("Expect: %+v, got: %+v", expect, got)
 		}
-		fmt.Println(got)
 	}
 }
