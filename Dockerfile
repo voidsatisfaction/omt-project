@@ -16,4 +16,4 @@ RUN glide install
 EXPOSE 9000
 
 # For dev hotloading
-CMD sh start-server.sh
+CMD sh ./script/start-server.sh
