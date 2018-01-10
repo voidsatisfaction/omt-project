@@ -4,11 +4,11 @@
 
 ![qr code](./qr.png)
 
-You can san this qr code at Line app to add "Hiyoko teacher"
+You can scan this qr code from Line app to add "Hiyoko teacher"
 
 ![hiyoko sensei profile](./hiyoko_sensei_profile.png)
 
-This is **line bot** named "Hiyoko teacher" who is specialist of word exams
+This is **line bot** named "Hiyoko teacher" who gives word exams with timer system.
 
 ## Motivation
 
@@ -30,7 +30,7 @@ It is funny to make and even solve my problem. Wow.
 
 ## Developement
 
-1. Make sure install docker && Set environment variables(Line bot keys)
+1. Make sure install docker && Set environment variables(Line bot keys, aws keys)
 2. clone it to `$GOPATH/src/`
 3. `docker-compose up`
 4. enter `localhost:19000`
