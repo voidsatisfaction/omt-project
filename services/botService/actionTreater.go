@@ -126,17 +126,20 @@ func TreatSetAction(a *Action) *ActionResult {
 
 	err := a.ValidateTime()
 	if err != nil {
+		fmt.Printf("Validate time error, %+v\n", err)
 		ar.ServerError()
 		return ar
 	}
 
 	// TODO: add quiz timer to UserInfo
 	if err := timerService.AddQuizTimer(uid, timerId); err != nil {
+		fmt.Printf("timerService.AddQuizTimer error, %+v\n", err)
 		ar.ServerError()
 		return ar
 	}
 
 	if err != userService.AddPushTimes(uid, timerId) {
+		fmt.Printf("userService.AddPushTimes error, %+v\n", err)
 		ar.ServerError()
 		return ar
 	}
