@@ -7,6 +7,7 @@ import (
 	"omt-project/config"
 	"omt-project/handlers/botHandler"
 	"omt-project/handlers/webHandler"
+	"omt-project/services/cronService"
 	"omt-project/templateEngine"
 
 	"github.com/labstack/echo"
@@ -17,12 +18,12 @@ import (
 func main() {
 	// Setup
 	e := echo.New()
-	cfg := config.Setting()
 	e.Renderer = templateEngine.NewHtmlTemplateEngine()
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	cfg := config.Setting()
 	bot, err := linebot.New(
 		cfg.ChannelSecret,
 		cfg.ChannelToken,
@@ -41,6 +42,9 @@ func main() {
 	e.POST("/quiz/result", webHandler.GetQuizResultHandlerGenerator(e))
 
 	e.POST("/bot/callback", botHandler.CallbackHandlerGenerator(e, bot))
+
+	// Cron jobs
+	cronService.RunAllCronJobs(bot)
 
 	// Listen
 	e.Logger.Info(e.Start(fmt.Sprintf(":%s", cfg.Port)))

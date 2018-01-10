@@ -5,28 +5,41 @@ import (
 	"omt-project/services/timerService"
 	"omt-project/utils"
 	"time"
+
+	"github.com/line/line-bot-sdk-go/linebot"
 )
 
-func RunAllCronJobs() {
+func RunAllCronJobs(bot *linebot.Client) {
 	s := New()
-	s.Add(checkTimerAndPushQuizUrl, 1*time.Minute)
+	s.Add(
+		checkTimerAndPushQuizUrl(bot),
+		1*time.Minute,
+	)
 	s.Run()
 }
 
-func checkTimerAndPushQuizUrl() {
-	currentTimerId := utils.GetTimerId(time.Now())
+func checkTimerAndPushQuizUrl(bot *linebot.Client) func() {
+	return func() {
+		t := utils.JapanTimeNow()
+		fmt.Println("cron doing good")
+		currentTimerId := utils.GetTimerId(t)
 
-	exist, err := timerService.ExistQuizTimer(currentTimerId)
-	if err != nil {
-		panic(err)
-	}
-	if !exist {
-		return
-	}
+		exist, err := timerService.ExistQuizTimer(currentTimerId)
+		if err != nil {
+			panic(err)
+		}
+		if !exist {
+			return
+		}
 
-	quizTimerMap, err := timerService.ReadQuizTimer(currentTimerId)
-	if err != nil {
-		panic(err)
+		timerRegisteredIds, err := timerService.ReadAllIdsByTimerId(currentTimerId)
+		if err != nil {
+			panic(err)
+		}
+
+		for _, userId := range timerRegisteredIds {
+			message := linebot.NewTextMessage(utils.UserQuizUrl(userId))
+			bot.PushMessage(userId, message).Do()
+		}
 	}
-	fmt.Println(quizTimerMap)
 }
