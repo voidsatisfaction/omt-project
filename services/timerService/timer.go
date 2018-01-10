@@ -42,6 +42,7 @@ func CreateQuizTimer(timerId string) error {
 	return nil
 }
 
+// ex. timerId 2:34
 func ReadQuizTimer(timerId string) (quizTimerMap, error) {
 	c := config.Setting()
 	svc, err := awsS3.CreateS3Client()
@@ -108,4 +109,26 @@ func AddQuizTimer(userId, timerId string) error {
 	}
 
 	return nil
+}
+
+func ExistQuizTimer(timerId string) (bool, error) {
+	c := config.Setting()
+	svc, err := awsS3.CreateS3Client()
+	if err != nil {
+		return false, err
+	}
+
+	timerKey := awsS3.GetTimerKey(timerId)
+	_, err = svc.HeadObject(&s3.HeadObjectInput{
+		Bucket: aws.String(c.AwsS3Bucket),
+		Key:    aws.String(timerKey),
+	})
+
+	if err != nil {
+		if strings.Contains(err.Error(), "status code: 404") {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
