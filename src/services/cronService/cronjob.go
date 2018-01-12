@@ -2,8 +2,8 @@ package cronService
 
 import (
 	"fmt"
-	"omt-project/services/timerService"
-	"omt-project/utils"
+	"omt-project/src/services/timerService"
+	"omt-project/src/utils"
 	"time"
 
 	"github.com/line/line-bot-sdk-go/linebot"

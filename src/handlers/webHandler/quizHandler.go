@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"net/url"
 	"omt-project/config"
-	"omt-project/services/quizService"
-	"omt-project/services/userService"
-	"omt-project/templateEngine"
+	"omt-project/src/services/quizService"
+	"omt-project/src/services/userService"
+	"omt-project/src/templateEngine"
 	"path"
 	"strconv"
 

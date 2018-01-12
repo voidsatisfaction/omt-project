@@ -2,7 +2,7 @@ package botService
 
 import (
 	"fmt"
-	"omt-project/services/wordService"
+	"omt-project/src/services/wordService"
 	"strings"
 )
 

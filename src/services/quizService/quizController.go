@@ -2,7 +2,7 @@ package quizService
 
 import (
 	"errors"
-	"omt-project/services/wordService"
+	"omt-project/src/services/wordService"
 	"sort"
 )
 

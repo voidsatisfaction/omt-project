@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"omt-project/config"
-	"omt-project/handlers/botHandler"
-	"omt-project/handlers/webHandler"
-	"omt-project/services/cronService"
-	"omt-project/templateEngine"
+	"omt-project/src/handlers/botHandler"
+	"omt-project/src/handlers/webHandler"
+	"omt-project/src/services/cronService"
+	"omt-project/src/templateEngine"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
