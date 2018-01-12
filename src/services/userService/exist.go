@@ -1,8 +1,8 @@
 package userService
 
 import (
-	"omt-project/api/awsS3"
 	"omt-project/config"
+	"omt-project/src/api/awsS3"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"

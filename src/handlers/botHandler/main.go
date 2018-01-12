@@ -3,9 +3,9 @@ package botHandler
 import (
 	"fmt"
 	"net/http"
-	"omt-project/services/botService"
-	"omt-project/services/userService"
-	"omt-project/services/wordService"
+	"omt-project/src/services/botService"
+	"omt-project/src/services/userService"
+	"omt-project/src/services/wordService"
 
 	"github.com/labstack/echo"
 	"github.com/line/line-bot-sdk-go/linebot"

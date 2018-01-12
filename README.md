@@ -2,11 +2,11 @@
 
 ## Let's memorize english words everyday!! Get 3 words quiz everyday!!
 
-![qr code](./qr.png)
+![qr code](./docs/image/qr.png)
 
 You can scan this qr code from Line app to add "Hiyoko teacher"
 
-![hiyoko sensei profile](./hiyoko_sensei_profile.png)
+![hiyoko sensei profile](./docs/image/hiyoko_sensei_profile.png)
 
 This is **line bot** named "Hiyoko teacher" who gives word exams with timer system.
 

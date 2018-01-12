@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"omt-project/api/glosbe"
 	"omt-project/config"
-	"omt-project/services/timerService"
-	"omt-project/services/userService"
-	"omt-project/services/wordService"
+	"omt-project/src/api/glosbe"
+	"omt-project/src/services/timerService"
+	"omt-project/src/services/userService"
+	"omt-project/src/services/wordService"
 	"strings"
 )
 

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"omt-project/api/awsS3"
 	"omt-project/config"
+	"omt-project/src/api/awsS3"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
