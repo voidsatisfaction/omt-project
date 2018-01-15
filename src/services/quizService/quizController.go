@@ -3,6 +3,7 @@ package quizService
 import (
 	"errors"
 	"omt-project/src/services/wordService"
+	"omt-project/src/utils"
 	"sort"
 )
 
@@ -29,8 +30,26 @@ func (qc *QuizController) CreateMeaningWordQuiz(n int) (wordService.Words, error
 	if n == 0 {
 		return nil, errors.New("CreateMeaningWordQuiz: n should be more than 0")
 	}
-	if len(wordsSortedByPriority) < n {
+	// if quiz numbers are more than words
+	// it returns all words as quiz
+	if len(wordsSortedByPriority) <= n {
 		return wordsSortedByPriority, nil
+	}
+
+	// if former 0 ~ k index are all same value(k > n),
+	// computer randomize these
+	lastSamePriorityIndex := 0
+	for i, word := range wordsSortedByPriority {
+		nextWord := wordsSortedByPriority[i+1]
+		if word.Priority > nextWord.Priority {
+			break
+		}
+		lastSamePriorityIndex++
+	}
+	if lastSamePriorityIndex > n {
+		wordsUntilSamePriority := wordsSortedByPriority[:lastSamePriorityIndex]
+		utils.Shuffle(byPriority(wordsUntilSamePriority))
+		return wordsUntilSamePriority[:n], nil
 	}
 	return wordsSortedByPriority[:n], nil
 }
