@@ -22,7 +22,7 @@
             {{range $i, $word := .words}}
               <div class="form-group">
                 <h4>{{$word.Meaning}}</h4>
-                <input class="form-control" name="user-ans-{{$i}}" type="text" placeholder="答えを入力">
+                <input class="form-control" name="user-ans-{{$i}}" type="text" placeholder="答えを入力" autocomplete="off">
                 <input class="form-control" name="good-ans-{{$i}}" type="hidden" value="{{$word.Name}}">
               </div>
             {{end}}
