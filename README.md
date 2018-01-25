@@ -25,15 +25,25 @@ It is funny to make and even solve my problem. Wow.
 1. echo(golang)
 2. Line Messaging API
 3. AWS S3
-4. Heroku
+4. Docker
 5. Travis CI
 
 ## Developement
 
-1. Make sure install docker && Set environment variables(Line bot keys, aws keys)
+1. Make sure install docker && docker-compose && Set .env_dev file
 2. clone it to `$GOPATH/src/`
 3. `docker-compose up`
 4. enter `localhost:19000`
 5. If `Worked` shown, server is running
 
 Hot recompiling(gin) works. So, after change server-side codes, just reload it on web browser.
+
+But you cannot use line API because, Line Message is only portable via https.
+
+## Deployment
+
+1. Make sure install docker && docker-compose && Set .env_prod file
+2. clone it to `$GOPATH/src/`
+3. `script/prod.sh`
+4. enter `https://yourhost`
+5. If `Worked` shown, server is running
