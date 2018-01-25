@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build:
+      context: ../.
+      dockerfile: Dockerfile-prod
+    container_name: "omt-project"
+    ports:
+      - "19000:9000"
+    env_file:
+      - ../.env_prod
+    restart: "on-failure"
