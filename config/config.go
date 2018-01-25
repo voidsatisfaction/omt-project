@@ -21,20 +21,9 @@ type Config struct {
 // Setting function returns configuration
 func Setting() *Config {
 	c := &Config{}
-	switch os.Getenv("APP_ENV") {
-	case "DEV":
-		c.AppEnv = "DEV"
-		c.Port = "9001"
-		c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
-		c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
-		c.Host = "http://localhost:19000"
-	case "PROD":
-		c.AppEnv = "PROD"
-		c.Port = os.Getenv("PORT")
-		c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
-		c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
-		c.Host = "https://omt-project.herokuapp.com"
-	}
+	// common setting
+	c.ChannelSecret = os.Getenv("CHANNEL_SECRET")
+	c.ChannelToken = os.Getenv("CHANNEL_TOKEN")
 	c.AwsRegion = os.Getenv("AWS_REGION")
 	c.AwsAccessKeyID = os.Getenv("AWS_ACCESS_KEY_ID")
 	c.AwsSecretAccessKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
@@ -42,5 +31,19 @@ func Setting() *Config {
 	c.AwsS3BucketUsersKey = "users/"
 	c.AwsS3BucketWordsKey = "words/"
 	c.AwsS3BucketQuizTimersKey = "quizTimers/"
+
+	// environment dependent setting
+	switch os.Getenv("APP_ENV") {
+	case "DEV":
+		c.AppEnv = "DEV"
+		c.Port = "9001"
+		c.Host = "http://localhost:19000"
+	case "STAGING":
+		// TODO: add staging setting
+	case "PROD":
+		c.AppEnv = "PROD"
+		c.Port = os.Getenv("PORT")
+		c.Host = "https://hiyoko-teacher.let.media.kyoto-u.ac.jp/live"
+	}
 	return c
 }

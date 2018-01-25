@@ -3,3 +3,4 @@ vendor/
 gin-bin
 
 .env_dev*
+.env_prod*
