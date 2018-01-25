@@ -42,7 +42,7 @@ func Setting() *Config {
 		// TODO: add staging setting
 	case "PROD":
 		c.AppEnv = "PROD"
-		c.Port = "9000"
+		c.Port = os.Getenv("PORT")
 		c.Host = "https://hiyoko-teacher.let.media.kyoto-u.ac.jp/live"
 	}
 	return c
