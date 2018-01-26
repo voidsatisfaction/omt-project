@@ -40,6 +40,9 @@ func (qc *QuizController) CreateMeaningWordQuiz(n int) (wordService.Words, error
 	// computer randomize these
 	lastSamePriorityIndex := 0
 	for i, word := range wordsSortedByPriority {
+		if i == len(wordsSortedByPriority)-1 {
+			break
+		}
 		nextWord := wordsSortedByPriority[i+1]
 		if word.Priority > nextWord.Priority {
 			break
