@@ -50,7 +50,7 @@ func (qc *QuizController) CreateMeaningWordQuiz(n int) (wordService.Words, error
 		lastSamePriorityIndex++
 	}
 	if lastSamePriorityIndex > n {
-		wordsUntilSamePriority := wordsSortedByPriority[:lastSamePriorityIndex]
+		wordsUntilSamePriority := wordsSortedByPriority[:lastSamePriorityIndex+1]
 		utils.Shuffle(byPriority(wordsUntilSamePriority))
 		return wordsUntilSamePriority[:n], nil
 	}
