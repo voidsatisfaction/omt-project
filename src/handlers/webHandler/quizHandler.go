@@ -39,10 +39,13 @@ func GetQuizHandlerGenerator(e *echo.Echo) echo.HandlerFunc {
 		}
 
 		// Make data to make dynamic template
+		cfg := config.Setting()
+
 		data := templateEngine.NewData()
 		data.Add("userId", userId)
 		data.Add("words", words)
 		data.Add("questionNums", len(words))
+		data.Add("appEnv", cfg.AppEnv)
 
 		return c.Render(http.StatusOK, "quiz.html", data)
 	}

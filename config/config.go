@@ -40,6 +40,9 @@ func Setting() *Config {
 		c.Host = "http://localhost:19000"
 	case "STAGING":
 		// TODO: add staging setting
+		c.AppEnv = "STAGING"
+		c.Port = os.Getenv("PORT")
+		c.Host = "https://hiyoko-teacher.let.media.kyoto-u.ac.jp/staging"
 	case "PROD":
 		c.AppEnv = "PROD"
 		c.Port = os.Getenv("PORT")

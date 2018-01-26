@@ -16,7 +16,13 @@
             <p>日本語の意味を表す英単語を記入してください</p>
           </div>
           <h2>問題</h2>
+          {{if eq .appEnv "PROD"}}
+          <form action="/live/quiz" method="post">
+          {{else if eq .appEnv "STAGING"}}
+          <form action="/staging/quiz" method="post">
+          {{else if eq .appEnv "DEV"}}
           <form action="/quiz" method="post">
+          {{end}}
             <input class="form-control" name="question-nums" type="hidden" value={{.questionNums}}>
             <input class="form-control" name="user-id" type="hidden" value={{.userId}}>
             {{range $i, $word := .words}}
