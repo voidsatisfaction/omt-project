@@ -9,3 +9,5 @@ services:
       - .:/go/src/omt-project
     env_file:
       - .env_dev
+    environment:
+      - APP_ENV=DEV
