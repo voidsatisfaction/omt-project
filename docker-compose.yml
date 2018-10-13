@@ -11,3 +11,13 @@ services:
       - .env_dev
     environment:
       - APP_ENV=DEV
+  db:
+    image: mysql:5.7
+    container_name: "mysql"
+    ports:
+      - "13306:3306"
+    env_file:
+      - .env_dev
+    environment:
+      - APP_ENV=DEV
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
